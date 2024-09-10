@@ -1,0 +1,18 @@
+/*
+The difficult part is to to exclude those students having the same count of challenges as others but less than the maximum count of challenges or appear more than once.
+Use “having” function and nested select operators to solve this issues.
+*/
+SELECT Hackers.hacker_id, name, COUNT(challenge_id) AS T_Challenge
+FROM Hackers JOIN Challenges
+ON Hackers.hacker_id = Challenges.hacker_id
+GROUP BY Hackers.hacker_id, name
+HAVING T_Challenge = (SELECT COUNT(C1.challenge_id)
+              FROM Challenges AS C1
+              GROUP BY C1.hacker_id 
+              ORDER BY COUNT(*) DESC
+              LIMIT 1) OR
+        T_Challenge NOT IN (SELECT COUNT(C2.challenge_id)
+                    FROM Challenges AS C2
+                    GROUP BY C2.hacker_id 
+                    HAVING C2.hacker_id <> Hackers.hacker_id)
+ORDER BY T_Challenge DESC, Hackers.hacker_id ASC;
