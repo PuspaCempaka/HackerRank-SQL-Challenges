@@ -1,0 +1,31 @@
+/*
+The idea is to create a summary table to join the information from the tables
+next, filter the challenge ID with total submission = 0, total accepted submission, total view and total unique view is 0
+then exclude this challenge ID from the calculation
+*/
+WITH Summary AS 
+(SELECT Contests.contest_id, hacker_id, name,
+       Colleges.college_id, Challenges.challenge_id,
+       CASE WHEN VS.T1 IS NULL THEN 0 ELSE VS.T1 END AS N1,
+       CASE WHEN VS.T2 IS NULL THEN 0 ELSE VS.T2 END AS N2,
+       CASE WHEN SS.T3 IS NULL THEN 0 ELSE SS.T3 END AS N3,
+       CASE WHEN SS.T4 IS NULL THEN 0 ELSE SS.T4 END AS N4
+FROM Contests
+JOIN Colleges ON Contests.contest_id = Colleges.contest_id
+JOIN Challenges ON Colleges.college_id = Challenges.college_id
+
+LEFT JOIN (SELECT challenge_id, SUM(total_views) AS T1, SUM(total_unique_views) AS T2
+           FROM View_Stats
+           GROUP BY challenge_id) AS VS ON Challenges.challenge_id = VS.challenge_id
+
+LEFT JOIN (SELECT challenge_id, SUM(total_submissions) AS T3, SUM(total_accepted_submissions) AS T4
+           FROM Submission_Stats
+           GROUP BY challenge_id) AS SS ON Challenges.challenge_id = SS.challenge_id)
+
+SELECT Summary.contest_id, hacker_id, name,
+        SUM(N3), SUM(N4), SUM(N1), SUM(N2)
+FROM Summary
+WHERE Summary.challenge_id NOT IN (SELECT challenge_id FROM Summary 
+                                   WHERE N1 = 0 AND N2 = 0 AND N3 = 0 AND N4=0)
+GROUP BY Summary.contest_id, hacker_id, name
+ORDER BY Summary.contest_id;
