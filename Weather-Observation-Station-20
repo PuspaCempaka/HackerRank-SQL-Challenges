@@ -1,0 +1,16 @@
+/*
+First, count the length of data, n=499 is the odd number.
+Since it is the odd number, the median is the data in (n+1)/2 = 250
+then, create a table that sorts the Lat_N data from the smallest to the largest and creates a new column as the row id.
+Note: This formula might not work for data that the length is an even number.
+*/
+
+SET @Row_ID=0;
+WITH Tb1 AS 
+(SELECT @Row_ID:=@Row_ID+1 AS Nbr, Lat_N
+FROM STATION
+ORDER BY Lat_N)
+
+SELECT ROUND(LAT_N,4)
+FROM Tb1
+WHERE Nbr = (SELECT Floor(COUNT(Lat_N)/2)+1 FROM STATION)
