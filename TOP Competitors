@@ -1,0 +1,20 @@
+/*
+Create a table in which contain the information about hacker id, submission id and challenge id.
+In this table, only challenges ID that have full score is listed (compare the score in submission table with score in difficulty table.
+From this table, select information about hacker id and name which have total challenge > 1
+*/
+
+WITH Table1 AS
+(SELECT Hackers.hacker_id AS H1, name,
+        submission_id, Submissions.challenge_id AS C1
+FROM Hackers
+JOIN Submissions ON Hackers.hacker_id = Submissions.hacker_id
+JOIN Challenges ON Submissions.challenge_id = Challenges.challenge_id
+JOIN Difficulty ON Challenges.difficulty_level = Difficulty.difficulty_level
+WHERE Submissions.score = Difficulty.score)
+
+SELECT H1, name
+FROM Table1
+GROUP BY H1, name
+HAVING count(C1)>1
+ORDER BY count(C1) DESC, H1 ASC;
