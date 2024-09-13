@@ -1,0 +1,14 @@
+/*
+First, create a table which sort the length of city names from the shortest to the longest
+Then use this table as the condition to other table
+*/
+
+WITH Table1 AS
+(SELECT CITY, LENGTH(CITY) AS L1
+FROM STATION
+ORDER BY L1 ASC, CITY ASC)
+
+SELECT CITY, LENGTH(CITY)
+FROM Station
+WHERE CITY = (SELECT CITY FROM Table1 LIMIT 1)
+OR LENGTH(CITY) = (SELECT MAX(L1) AS Longest FROM Table1 LIMIT 1)
