@@ -1,0 +1,22 @@
+/*
+The idea is to create a table only contain of P and P is not null.
+To delete the duplicate, we create new variable called cnt in this table.
+Create a new column (cat) which:
+- N with P is Null is categorized as "Root"
+- N that not have the same value with P1 in the new table is categorized as "Leaf"
+- else will be categorized as "Inner"
+*/
+
+WITH Table1 AS
+(SELECT P AS P1, COUNT(P) AS cnt
+FROM BST
+WHERE P IS NOT NULL
+GROUP BY P)
+
+SELECT N,
+       CASE WHEN P IS NULL THEN "Root"
+            WHEN N NOT IN (SELECT P1 FROM Table1) THEN "Leaf"
+            ELSE "Inner"
+            END AS Cat
+FROM BST
+ORDER BY N;
