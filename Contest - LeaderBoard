@@ -1,0 +1,16 @@
+/*
+First, identify the maximum score for each challenge which submitted by the hackers.
+Then join the table to have the information of hacker name and calculate the total score for each hacker id.
+*/
+
+WITH S1 AS
+(SELECT hacker_id, challenge_id, MAX(score) AS Result
+FROM Submissions
+GROUP BY hacker_id, challenge_id)
+
+SELECT Hackers.hacker_ID, Name, SUM(S1.Result) AS T_Score
+FROM Hackers JOIN S1
+ON Hackers.hacker_ID = S1.hacker_ID
+GROUP BY Hackers.hacker_ID, Name
+HAVING SUM(S1.Result)>0
+ORDER BY T_Score DESC, Hackers.hacker_ID ASC ;
