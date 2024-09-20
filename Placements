@@ -1,0 +1,19 @@
+/*
+First I create a table which contain the information of best friend ID and their salary for each student ID.
+Then, I join this group with student information and packages to have a complete table of student information and their best friend.
+Final step, I select the student who have salary lower than their best friend.
+*/
+
+WITH F1 AS 
+(SELECT Friends.ID AS F_ID, Friend_ID, Salary AS Friend_Salary
+FROM Friends JOIN Packages ON Friends.friend_ID = Packages.ID)
+
+SELECT Name
+FROM
+(SELECT Students.ID, Name, Salary AS Student_Salary,
+       F1.Friend_ID, F1.Friend_Salary
+FROM Students 
+JOIN Packages ON Students.ID = Packages.ID
+JOIN F1 ON Students.ID = F1.F_ID) AS Summary
+WHERE Student_Salary < Friend_Salary
+ORDER BY Friend_Salary
