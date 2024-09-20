@@ -16,4 +16,4 @@ FROM Students
 JOIN Packages ON Students.ID = Packages.ID
 JOIN F1 ON Students.ID = F1.F_ID) AS Summary
 WHERE Student_Salary < Friend_Salary
-ORDER BY Friend_Salary
+ORDER BY Friend_Salary;
