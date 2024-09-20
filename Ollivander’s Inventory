@@ -1,0 +1,18 @@
+/*
+First, create a table containing the minimum coins needed per wand age and wand power for each category.
+Then use this information as the condition for the second table.
+*/
+
+WITH List AS
+(SELECT Wands.code AS C1, age, power, MIN(coins_needed) AS Coins
+FROM Wands JOIN Wands_Property
+ON Wands.code = Wands_Property.code
+WHERE is_evil = 0
+GROUP BY Wands.code, age, power)
+
+SELECT ID, Wands_Property.Age, Wands.Coins_Needed, Wands.Power
+FROM Wands JOIN Wands_Property
+ON Wands.code = Wands_Property.code
+JOIN List ON Wands_Property.code = List.C1
+WHERE (Wands_Property.Age = List.age AND Wands.Coins_Needed = list.coins AND Wands.Power = List.power)
+ORDER BY Wands.Power DESC, Wands_Property.Age DESC;
