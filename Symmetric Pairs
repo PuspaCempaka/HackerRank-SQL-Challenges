@@ -1,0 +1,16 @@
+/*
+First, create a table, CTE which each row in the table is assigned a unique number using the ROW_NUMBER() function.
+Then, performe self join on the CTE to match the rows where X and Y are symmetric.
+The f1.rn != f2.rn condition ensures that the same row is not matched with itself, which would lead to false positive results.
+*/
+
+WITH CTE AS
+(SELECT X, Y,
+        ROW_NUMBER() OVER(ORDER BY X) AS rn
+FROM Functions)
+
+SELECT DISTINCT F1.X, F1.Y
+FROM CTE F1 JOIN CTE F2
+ON F1.X = F2.Y AND F1.Y = F2.X
+WHERE F1.X <= F1.Y AND F1.rn != F2.rn
+ORDER BY F1.X;
