@@ -1,0 +1,25 @@
+/*
+First, extract the start_date which not the same with the end_date and end_date which not the same with the start_date.
+Then combine this two information, with the requirement that start_date < end_date and use the MIN() function to extract the minimum end_date for each start_date.
+Then sort it by the different days between start and end date and by the start date
+*/
+
+WITH A AS
+(SELECT Start_Date
+   FROM Projects
+   WHERE Start_Date NOT IN (SELECT End_Date FROM Projects))
+        
+, B AS
+(SELECT End_Date
+   FROM Projects
+   WHERE End_Date NOT IN (SELECT Start_Date FROM Projects))
+ 
+, NP AS
+(SELECT Start_Date, MIN(End_Date) AS End_date
+FROM A,B
+WHERE Start_Date < End_Date
+GROUP BY Start_Date)
+
+SELECT *
+FROM NP
+ORDER BY DATEDIFF(day, Start_Date, End_Date), Start_date;
